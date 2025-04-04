@@ -64,7 +64,7 @@ After adding BA, all other functions of the platform become available to you, su
 
 ### Certificate of Authorisation
 The **Certificate of Authorisation** is a mandatory agreement signed by suppliers when importing an [IP-Block](#ip-blocks) onto the platform. This certificate signifies the supplier's consent for their [IP-Block](#ip-blocks) to be listed on the marketplace and rented out to other users in accordance with the platform's rules and policies.
-
+w
 When a supplier imports an [IP-Block](#ip-blocks), the certificate is sent to them via **PandaDoc**. By signing the document, the supplier confirms their agreement to the terms of usage, ensuring a transparent and secure process for all parties involved.
 
 ### CIDR
@@ -203,15 +203,15 @@ RPKI improves routing security by protecting against route hijacks and misconfig
 
 
 
-**Reverse DNS ([rDNS](#rdns))** is the process of resolving an IP address to a domain name, the opposite of the standard DNS lookup. In a regular DNS query, a domain name is translated into an IP address. However, with [rDNS](#rdns), the system identifies which domain name is associated with a specific IP address.
+**Reverse DNS ([rDNS](#rdns-reverse-dns))** is the process of resolving an IP address to a domain name, the opposite of the standard DNS lookup. In a regular DNS query, a domain name is translated into an IP address. However, with [rDNS](#rdns-reverse-dns), the system identifies which domain name is associated with a specific IP address.
 
-[rDNS](#rdns) is primarily used for verification and security purposes. It helps validate the origin of emails to reduce spam by confirming that the sender's IP address matches a legitimate domain name. Many mail servers reject or flag emails from servers without proper [rDNS](#rdns) configuration.
+[rDNS](#rdns-reverse-dns) is primarily used for verification and security purposes. It helps validate the origin of emails to reduce spam by confirming that the sender's IP address matches a legitimate domain name. Many mail servers reject or flag emails from servers without proper [rDNS](#rdns-reverse-dns) configuration.
 
-[rDNS](#rdns) records are stored as **PTR (Pointer) records** in the DNS database. Unlike forward DNS, [rDNS](#rdns) queries use a special domain called `in-addr.arpa`, where the IP address is reversed and appended with this domain for lookup.
+[rDNS](#rdns-reverse-dns) records are stored as **PTR (Pointer) records** in the DNS database. Unlike forward DNS, [rDNS](#rdns-reverse-dns) queries use a special domain called `in-addr.arpa`, where the IP address is reversed and appended with this domain for lookup.
 
-Setting up [rDNS](#rdns) requires administrative access to the DNS records of the IP address block. It is typically managed by the IP block owner or provider through cooperation with the relevant [Regional Internet Registry (RIR)](#rir-regional-internet-registry), such as RIPE for Europe.
+Setting up [rDNS](#rdns-reverse-dns) requires administrative access to the DNS records of the IP address block. It is typically managed by the IP block owner or provider through cooperation with the relevant [Regional Internet Registry (RIR)](#rir-regional-internet-registry), such as RIPE for Europe.
 
-Although [rDNS](#rdns) is not essential for most internet services, it plays a key role in improving trust and reducing network abuse.
+Although [rDNS](#rdns-reverse-dns) is not essential for most internet services, it plays a key role in improving trust and reducing network abuse.
 
 You can make a [rDNS Request](#rdns-request) to the leased [IP-Block](#ip-blocks) to connect rDNS.
 
@@ -415,7 +415,7 @@ Suppliers with an approved [Business Account](#business-account) can import [IP-
    - [Min Split Size](#minimal-split-size): Minimum block subdivision size.  [1]
    - **Pricing**: Prices for the block and its sub-blocks.  
    - **Leasing Period**: Duration for which the block is listed (14–60 months).  
-   - **[rDNS](#rdns) Delegation**: Allow reverse DNS delegation if needed.  
+   - **[rDNS](#rdns-reverse-dns) Delegation**: Allow reverse DNS delegation if needed.  
    - **Minimum Lease Period**: Shortest rental period.
 
 4. **Manager Approval**  
@@ -537,15 +537,15 @@ The Assignment Request can be completed or canceled under the following scenario
 
 ### rDNS Request
 
-After successfully being assigned an IP block, the customer can submit an [rDNS](#rdns) request if [rDNS](#rdns) setup was enabled at the time of assignment. If this feature is unavailable, the customer cannot send an [rDNS](#rdns) request.
+After successfully being assigned an IP block, the customer can submit an [rDNS](#rdns-reverse-dns) request if [rDNS](#rdns-reverse-dns) setup was enabled at the time of assignment. If this feature is unavailable, the customer cannot send an [rDNS](#rdns-reverse-dns) request.
 
 **Process steps:**
 
-1. **Check [rDNS](#rdns) setup availability:**  
-   Ensure that [rDNS](#rdns) setup is enabled for your [IP-Block](#ip-blocks).
+1. **Check [rDNS](#rdns-reverse-dns) setup availability:**  
+   Ensure that [rDNS](#rdns-reverse-dns) setup is enabled for your [IP-Block](#ip-blocks).
 
 2. **Fill out the form:**  
-   Open the [rDNS](#rdns) request form and complete all required fields. The `nservers` fields are mandatory.  
+   Open the [rDNS](#rdns-reverse-dns) request form and complete all required fields. The `nservers` fields are mandatory.  
    - You can add multiple `nservers` fields as needed.
 
 3. **Submit the request:**  
@@ -554,9 +554,9 @@ After successfully being assigned an IP block, the customer can submit an [rDNS]
    - If the block belongs to another RIR, the supplier will perform the setup.
 
 4. **Confirmation or rejection:**  
-   - If successful, the customer will receive a confirmation, and [rDNS](#rdns) will be active on their [IP address range](#ip-blocks).  
+   - If successful, the customer will receive a confirmation, and [rDNS](#rdns-reverse-dns) will be active on their [IP address range](#ip-blocks).  
    - If rejected, the manager or supplier will provide an explanation. The customer can correct the issue and resubmit the request.
 
-5. **Canceling [rDNS](#rdns):**  
-   - [rDNS](#rdns) is automatically canceled if the customer terminates the [IP-Block](#ip-blocks) subscription. The manager or supplier removes the objects from the [RIR](#rir-regional-internet-registry) and confirms the action.  
-   - The customer can also manually cancel [rDNS](#rdns) through the management form.
+5. **Canceling [rDNS](#rdns-reverse-dns):**  
+   - [rDNS](#rdns-reverse-dns) is automatically canceled if the customer terminates the [IP-Block](#ip-blocks) subscription. The manager or supplier removes the objects from the [RIR](#rir-regional-internet-registry) and confirms the action.  
+   - The customer can also manually cancel [rDNS](#rdns-reverse-dns) through the management form.
