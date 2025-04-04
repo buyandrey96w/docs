@@ -8,21 +8,27 @@
   - [Certificate of Authorisation](#certificate-of-authorisation)
   - [CIDR](#cidr)
   - [LOA (Letter of Authorization)](#loa-letter-of-authorization)
+  - [LIR](#lir-local-internet-registry)
   - [Minimal Lease Period](#minimal-lease-period)
   - [Minimal Order Period](#minimal-order-period)
   - [Minimal Split Size](#minimal-split-size)
   - [PandaDoc](#pandadoc)
   - [Prefix](#prefix)
-  - [rDNS](#rdns)
+  - [rDNS](#rdns-reverse-dns)
+  - [ROA](#roa-route-origin-authorization)
+  - [Route objects](#route-object)
+  - [RPKI](#rpki-resource-public-key-infrastructure)
   - [IP-Blocks](#ip-blocks)
   - [Stripe](#stripe)
   - [Stripe Connected Accounts](#stripe-connected-accounts)
+  - [Subnet Status](#subnet-status)
   - [RIR (Regional Internet Registry)](#rir-regional-internet-registry)
   - [RIPE NCC](#ripe-ncc)
   - [RIPE Maintainer Attributes](#ripe-maintainer-attributes)
   - [ARIN Maintainer Attributes](#arin-maintainer-attributes)
   - [VAT](#vat)
   - [VAT Number](#vat-number)
+  - [WHOIS](#whois)
 - [Guides](#guides)
   - [Importing a Business Account](#importing-a-business-account)
   - [Editing a Business Account](#editing-a-business-account)
@@ -80,6 +86,27 @@ The document typically includes the following details:
 
 This document ensures proper routing and compliance within global network infrastructures, preventing unauthorized use of IP address space.
 
+### LIR (Local Internet Registry)
+
+A **Local Internet Registry (LIR)** is an organization, typically an Internet Service Provider (ISP) or large enterprise, that receives IP address allocations directly from a [Regional Internet Registry (RIR)](#rir-regional-internet-registry), such as [RIPE NCC](#ripe-ncc), ARIN, APNIC, etc.
+
+#### Key Responsibilities:
+- **Managing IP Space**  
+  LIRs are responsible for distributing IP addresses (usually Provider Aggregatable, [PA](#subnet-status)) to their customers or internal departments.
+
+- **Maintaining Registration Data**  
+  LIRs must document and maintain accurate [WHOIS](#whois) information for all assignments and sub-allocations.
+
+- **Compliance with RIR Policies**  
+  LIRs operate under the policies set by their [RIR](#rir-regional-internet-registry), including justifying IP usage, managing routing visibility, and updating registry data as needed.
+
+- **Interface Between RIR and End Users**  
+  LIRs act as intermediaries between the [RIR](#rir-regional-internet-registry) and end customers, simplifying address management and reducing the administrative load on [RIRs](#rir-regional-internet-registry).
+
+#### Example:
+An ISP that provides internet connectivity to businesses might become an [LIR](#lir-local-internet-registry), obtain a /18 IPv4 block from [RIPE](#ripe-ncc), and then assign /24 subnets to its clients.
+
+
 ### Minimal Lease Period
 The **minimal lease period** refers to the time during which the settings made by the **[IP-Block](#ip-blocks)** owner are stored in the **RIR** database, enabling the platform to use IPv4 addresses. The value can be selected from 14 to 60 months, with the option to extend the certificate in the future.
 
@@ -106,7 +133,75 @@ This flexibility allows providers to define how granularly their IP blocks can b
 ### Prefix
 The [prefix](#prefix) represents the number of leading 1 bits in the [IP-Block](#ip-blocks) mask. It determines the width (in bits) of the **[IP-Block](#ip-blocks)**.
 
-### [rDNS](#rdns)
+### rDNS (Reverse DNS)
+
+**rDNS** stands for **Reverse DNS**, a system that maps IP addresses back to domain names — the opposite of the more common forward DNS.
+
+#### How it works:
+- Forward DNS: `example.com` → `93.184.216.34`
+- Reverse DNS: `93.184.216.34` → `example.com`
+
+rDNS uses special DNS zones:
+- For IPv4: in-addr.arpa (e.g., `34.216.184.93.in-addr.arpa`)
+- For IPv6: ip6.arpa
+
+#### Common Uses:
+- Email spam filtering (checking if the sending IP matches a valid domain)
+- Network diagnostics (e.g., `ping`, `traceroute`)
+- Logging and audits (showing hostnames instead of IPs)
+
+#### Note:
+rDNS requires a PTR record and typically must be configured by the IP block owner (e.g., ISP or hosting provider).
+
+
+### ROA (Route Origin Authorization)
+
+**ROA** stands for **Route Origin Authorization** — a cryptographically signed object in the [RPKI](#rpki-resource-public-key-infrastructure) system that authorizes a specific [Autonomous System (AS)](#asn) to originate a particular IP prefix in BGP.
+
+#### Key Fields:
+- **Prefix:** The IP block being authorized (e.g., 203.0.113.0/24)
+- **Origin AS:** The AS number allowed to announce the prefix (e.g., AS12345)
+- **Max Length:** The maximum prefix length that can be announced (e.g., /24 allows 203.0.113.0/24, but not /25)
+- **Validity Period:** Start and end dates for the ROA's validity
+
+#### Purpose:
+ROAs are used by routers and validators to determine if BGP announcements are valid, helping to prevent route leaks and hijacks.
+
+#### Example:
+A ROA might state:  
+*“AS64500 is authorized to announce 192.0.2.0/24 with max length /24.”*
+
+Without a matching ROA, a route may be marked as **Invalid** during [RPKI](#rpki-resource-public-key-infrastructure) validation.
+
+
+### Route Object
+
+A **route object** is a record in the Internet Routing Registry (IRR) that describes which [Autonomous System (AS)](#asn) is authorized to originate a specific IP prefix in BGP (Border Gateway Protocol).
+
+#### Key Fields:
+- IP prefix (e.g., 203.0.113.0/24)
+- Origin AS (e.g., AS12345)
+- Maintainer information (who can update the object)
+
+Route objects help prevent routing issues by allowing network operators to verify and filter routing announcements.
+
+
+### RPKI (Resource Public Key Infrastructure)
+
+**RPKI** is a cryptographic framework designed to secure BGP routing by verifying the association between IP prefixes and the [Autonomous Systems](#asn) authorized to originate them.
+
+#### Key Component:
+- **ROA (Route Origin Authorization):**  
+  A digital attestation that states “AS12345 is authorized to announce 203.0.113.0/24”.
+
+#### RPKI Validation States:
+- **Valid** — the announcement matches a ROA.
+- **Invalid** — the announcement conflicts with a ROA.
+- **Not Found** — no ROA exists for the prefix.
+
+RPKI improves routing security by protecting against route hijacks and misconfigurations.
+
+
 
 **Reverse DNS ([rDNS](#rdns))** is the process of resolving an IP address to a domain name, the opposite of the standard DNS lookup. In a regular DNS query, a domain name is translated into an IP address. However, with [rDNS](#rdns), the system identifies which domain name is associated with a specific IP address.
 
@@ -114,11 +209,12 @@ The [prefix](#prefix) represents the number of leading 1 bits in the [IP-Block](
 
 [rDNS](#rdns) records are stored as **PTR (Pointer) records** in the DNS database. Unlike forward DNS, [rDNS](#rdns) queries use a special domain called `in-addr.arpa`, where the IP address is reversed and appended with this domain for lookup.
 
-Setting up [rDNS](#rdns) requires administrative access to the DNS records of the IP address block. It is typically managed by the IP block owner or provider through cooperation with the relevant Regional Internet Registry (RIR), such as RIPE for Europe.
+Setting up [rDNS](#rdns) requires administrative access to the DNS records of the IP address block. It is typically managed by the IP block owner or provider through cooperation with the relevant [Regional Internet Registry (RIR)](#rir-regional-internet-registry), such as RIPE for Europe.
 
 Although [rDNS](#rdns) is not essential for most internet services, it plays a key role in improving trust and reducing network abuse.
 
 You can make a [rDNS Request](#rdns-request) to the leased [IP-Block](#ip-blocks) to connect rDNS.
+
 
 ### IP-Blocks
 A contiguous range of IP addresses used for networking purposes. [IP-Blocks](#ip-blocks) on the platform can have the following statuses:
@@ -130,11 +226,37 @@ A contiguous range of IP addresses used for networking purposes. [IP-Blocks](#ip
 - **Occupied**: Assigned when the block is fully leased by clients.
 
 you can rent out your IP-Block by going through the [IP-Block importing process](#importing-an-ip-block)
+
 ### Stripe
 A payment processing platform enabling businesses to accept online payments and manage transactions. Learn more: [Stripe](https://stripe.com/).
 
 ### Stripe Connected Accounts
 Accounts connected to a primary **[Stripe](#stripe)** platform account, allowing businesses to manage payments for multiple users.
+
+### Subnet Status
+
+Subnet status refers to the classification of an IP subnet according to how it is used or assigned within IP address management systems (e.g. [RIPE](#ripe-ncc), ARIN, or internal registries). Common statuses include:
+
+- **Allocated PA (Provider Aggregatable)**  
+  Indicates that the subnet has been allocated to a [Local Internet Registry (LIR)](#lir-local-internet-registry), such as an ISP, and is part of a larger aggregated block. These subnets can be further assigned to customers but cannot be moved independently to another provider.
+
+- **Allocated PI (Provider Independent)**  
+  Assigned directly to an end-user organization by a [Regional Internet Registry (RIR)](#rir-regional-internet-registry). PI addresses are not tied to any specific provider and can be routed independently, making them portable between providers.
+
+- **Assigned**  
+  Indicates that the subnet has been assigned for actual use, either to an end-user or a customer. Assigned subnets can originate from either PA or PI space. No further sub-allocation is allowed from an Assigned block.
+
+- **Reserved**  
+  The subnet is reserved for future use or for specific technical purposes and is not currently routable.
+
+- **Available**  
+  The subnet exists in the address pool but has not yet been allocated or assigned.
+
+- **Deprecated**  
+  This status applies to subnets that are no longer recommended for use, usually due to policy or technical evolution (e.g., transition to IPv6).
+
+Understanding subnet status is important for managing IP address resources, planning routing, and maintaining compliance with IP policies.
+
 
 ### RIR (Regional Internet Registry)
 Organizations responsible for managing and registering internet resources (e.g., IP addresses and [ASNs](#asn)). Examples: ARIN, RIPE NCC, APNIC.
@@ -163,6 +285,19 @@ The **Réseaux IP Européens Network Coordination Centre** manages IP resources 
 
 ### VAT Number
 A required field for EU organizations when creating a [Business Account](#business-account). Verify VAT numbers at [VIES VAT Validation](https://ec.europa.eu/taxation_customs/vies/).
+
+### WHOIS
+
+**WHOIS** is a publicly accessible protocol and database used to look up registration information about internet resources such as IP addresses, AS numbers, and domain names.
+
+#### Typical Information Provided:
+- Organization name
+- Contact details (admin, technical)
+- IP address allocation or domain ownership
+- Status and registration dates
+
+WHOIS is essential for network troubleshooting, abuse reporting, and verifying resource ownership. Data is maintained by [Regional Internet Registries (RIRs)](#rir-regional-internet-registry) and domain registrars.
+
 
 ---
 ---
@@ -374,14 +509,14 @@ Depending on the [RIR](#rir-regional-internet-registry), the fields available fo
 ---
 
 #### **Step 6: Supplier Configures RPKI/ROA & Routes**  
-- Upon approval, the Supplier receives a notification to configure RPKI/ROA & routes in their [RIR](#rir-regional-internet-registry) for the blocks listed in the request.  
+- Upon approval, the Supplier receives a notification to configure [RPKI](#rpki-resource-public-key-infrastructure)/[ROA](#roa-route-origin-authorization) & [routes](#route-object) in their [RIR](#rir-regional-internet-registry) for the blocks listed in the request.  
 - The Supplier performs the configuration and confirms completion on the InterLIR portal.
 
 ---
 
 #### **Step 7: Manager Verifies Configuration**  
 - The InterLIR Manager receives a notification that the configuration has been completed.  
-- The Manager verifies that the required RPKI/ROA & routes are present in the [RIR](#rir-regional-internet-registry):
+- The Manager verifies that the required [RPKI](#rpki-resource-public-key-infrastructure)/[ROA](#roa-route-origin-authorization) & [routes](#route-object) are present in the [RIR](#rir-regional-internet-registry):
   - **If confirmed:** The assignment is marked as complete, and the Customer can now use the rented block.
   - **If not confirmed:** The Manager periodically rechecks until the configuration is complete and then confirms.
 
